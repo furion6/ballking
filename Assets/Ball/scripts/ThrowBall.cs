@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallScript : MonoBehaviour
+public class ThrowBall : MonoBehaviour
 {
     public GameObject bullet;
     public Transform firePoint;
@@ -19,11 +19,13 @@ public class BallScript : MonoBehaviour
 
     Vector2 lookDirection;
     float lookAngle;
-	private Vector2 startingBallPosition;
+	public ParticleSystem particleSystem;
+	public GameObject camera;
+	private SmoothCamera2D smoothCamera;
+
 
 	void Start() {
-			bullet.GetComponent<Rigidbody2D>().isKinematic = true;
-			startingBallPosition = bullet.transform.localPosition;
+		smoothCamera = camera.GetComponent<SmoothCamera2D>();
 	}
     void Update()
     {
@@ -39,32 +41,32 @@ public class BallScript : MonoBehaviour
 		   throwBall();
 		   onPlayer = false;
         }
-
-		if (Input.GetKey(KeyCode.DownArrow)) joinToPlayer();
     }
 
 	private void throwBall(){
-			bullet.GetComponent<Rigidbody2D>().isKinematic = false;
-		 	bullet.transform.position = firePoint.position;
-            bullet.transform.rotation = Quaternion.Euler(0, 0, lookAngle);
-			Debug.Log("holdtime-> " + holdTime);
+			GameObject ball = GameObject.Instantiate(bullet, firePoint.position, Quaternion.Euler(0,0,lookAngle));
+			smoothCamera.target = ball.transform;
+
+			ball.GetComponent<BallController>().setPlayer(gameObject);
+		 	//bullet.transform.position = firePoint.position;
+            //bullet.transform.rotation = Quaternion.Euler(0, 0, lookAngle);
 
 			float actualHoldTime =  Mathf.Clamp(holdTime, minHoldTime, maxHoldTime);
 			float holdTimePercentage = actualHoldTime/maxHoldTime;
 			float power = holdTimePercentage * (maxPower-minPower) + minPower;
 
-            bullet.GetComponent<Rigidbody2D>().velocity = firePoint.right * power;
-			Debug.Log("power-> " + power);
+            ball.GetComponent<Rigidbody2D>().velocity = firePoint.right * power;
 	}
 
-	private void joinToPlayer()
-	{
-		onPlayer = true;
-		bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
-		bullet.GetComponent<Rigidbody2D>().isKinematic = true;
-		bullet.transform.localPosition = startingBallPosition;
-
+	public void playDust(){
+		particleSystem.Play();
 	}
+
+	 public void canThrow()
+	 {
+	 	onPlayer = true;
+		smoothCamera.target = gameObject.transform;
+	 }
 
 	private void setFirePointRotation(){
         lookDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - new Vector3(player.transform.position.x, player.transform.position.y);
@@ -72,21 +74,8 @@ public class BallScript : MonoBehaviour
         firePoint.rotation = Quaternion.Euler(0, 0, lookAngle);
 	}
 
-	private void teleportPlayer(){
-		player.transform.position = new Vector2(bullet.transform.position.x, bullet.transform.position.y + 1.5f);
-		joinToPlayer();
-	}
 
-   public void OnCollisionEnter2D(Collision2D theCollision ){
-   if (theCollision.gameObject.layer == LayerMask.NameToLayer("normal_floor")) 
-   {
-     foreach(ContactPoint2D contact in theCollision.contacts)
-     {
-       if(contact.normal.y > 0.1f)
-       {
-         teleportPlayer();
-       }
-     }
-   }
- }
+
+  
+ 
 }

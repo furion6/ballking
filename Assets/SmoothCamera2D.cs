@@ -20,7 +20,7 @@ public class SmoothCamera2D : MonoBehaviour {
          {
              Vector3 point = camera.WorldToViewportPoint(target.position);
              Vector3 delta = target.position - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
-             Vector3 destination = new Vector3(transform.position.x,transform.position.y + delta.y + 3.0f,transform.position.z);
+             Vector3 destination = new Vector3(transform.position.x,transform.position.y + delta.y + 15.0f,transform.position.z);
              transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
          }
      
