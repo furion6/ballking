@@ -14,7 +14,7 @@ public class ThrowBall : MonoBehaviour
 	private float holdTime = 0f;
 
 	private float holdStartTimer = 0f;
-
+	public float angularVelo = 100.0f;
 	public bool onPlayer = true;
 
     Vector2 lookDirection;
@@ -22,13 +22,19 @@ public class ThrowBall : MonoBehaviour
 	public ParticleSystem particleSystem;
 	public GameObject camera;
 	private SmoothCamera2D smoothCamera;
+	private ClassHolder classHolder;
+
+	private PlayerController playerController;
 
 
 	void Start() {
+		classHolder = player.GetComponent<ClassHolder>();
 		smoothCamera = camera.GetComponent<SmoothCamera2D>();
+		playerController = player.GetComponent<PlayerController>();
 	}
     void Update()
     {
+		//if(classHolder.characterClass != CharacterClass.NEANDERTAL) return;
 		setFirePointRotation();
         if (Input.GetMouseButtonDown(0))
         {
@@ -37,9 +43,10 @@ public class ThrowBall : MonoBehaviour
 
 		if (Input.GetMouseButtonUp(0) && onPlayer)
         {
-           holdTime = Time.time - holdStartTimer;
-		   throwBall();
-		   onPlayer = false;
+        	holdTime = Time.time - holdStartTimer;
+			throwBall();
+			playerController.setIsThrowing(true);
+			onPlayer = false;
         }
     }
 
@@ -48,6 +55,8 @@ public class ThrowBall : MonoBehaviour
 			smoothCamera.target = ball.transform;
 
 			ball.GetComponent<BallController>().setPlayer(gameObject);
+			ball.GetComponent<BallController>().setCamera(camera);
+
 		 	//bullet.transform.position = firePoint.position;
             //bullet.transform.rotation = Quaternion.Euler(0, 0, lookAngle);
 
@@ -56,6 +65,7 @@ public class ThrowBall : MonoBehaviour
 			float power = holdTimePercentage * (maxPower-minPower) + minPower;
 
             ball.GetComponent<Rigidbody2D>().velocity = firePoint.right * power;
+			ball.GetComponent<Rigidbody2D>().angularVelocity = angularVelo;
 	}
 
 	public void playDust(){

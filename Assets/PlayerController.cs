@@ -20,9 +20,15 @@ public class PlayerController : MonoBehaviour
     //FixedUpdate is called at a fixed interval and is independent of frame rate. Put physics code here.
     void FixedUpdate()
     {
+        //FIXME - po teleportacji, żeby animacji nie było
+        if(rb2d.velocity.y < -0.1f) {
+            rb2d.velocity = new Vector2(0, rb2d.velocity.y);
+            animator.SetBool("isWalking", false);
+            return;
+        }
         //Store the current horizontal input in the float moveHorizontal.
         float moveHorizontal = Input.GetAxis ("Horizontal");
-        Debug.Log(moveHorizontal + "   " );
+        //Debug.Log(moveHorizontal + "   " );
         rb2d.velocity = new Vector2(moveHorizontal*speed , rb2d.velocity.y);
         animator.SetBool("isWalking", moveHorizontal!=0f );
         if(moveHorizontal >0 && !m_FacingRight) Flip();
@@ -31,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     private void Flip()
 	{
-        Debug.Log("flipping");
+        //Debug.Log("flipping");
 		// Switch the way the player is labelled as facing.
 		m_FacingRight = !m_FacingRight;
 
@@ -40,6 +46,10 @@ public class PlayerController : MonoBehaviour
 		theScale.x *= -1;
 		transform.localScale = theScale;
 	}
+
+    public void setIsThrowing(bool isThrowing){
+        animator.SetTrigger("Throw");
+    }
 
     
 }

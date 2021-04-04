@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - fogCol
+  - Ball
+  - ICE
+  - SLIDE
+  - NORMAL
   layers:
   - Default
   - TransparentFX
@@ -12,12 +17,12 @@ TagManager:
   - Water
   - UI
   - normal_floor
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Arrow
+  - Ball
+  - CannonBall
+  - floor
+  - ICE_MASK
   - 
   - 
   - 
@@ -38,6 +43,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: zaslony
+    uniqueID: 4257906385
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: New Layer
+    uniqueID: 2325867443
     locked: 0
